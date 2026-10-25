@@ -4,17 +4,21 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * Producer toward Paiements (Kafka/MQ); consumer of Base clients and caller of Paiements API.
+ * Books the trade from Trading/Pricing and fans it out to the downstream chain.
  *
  * <p>data_category per flow — see fixture.flow.TransitDataTypes:
- * CUSTOMER_REFERENTIAL, CHARGE_INSTRUCTION, ORDER_CREATED_EVENT, BILLING_INVOICE_REQUEST.
+ * TRADE_CAPTURE, POSITION_SNAPSHOT, TRADE_CONFIRMATION, SETTLEMENT_INSTRUCTION,
+ * TRADE_ECONOMICS, REGULATORY_REPORT, ACCOUNTING_EVENT.
  */
 @RestController
-@RequestMapping("/api/v1/orders")
+@RequestMapping("/api/v1/trades")
 public class IntegrationHints {
 
-  // @FeignClient(name = "base-clients") → data_category CUSTOMER_REFERENTIAL
-  // HTTP paiements/charge → data_category CHARGE_INSTRUCTION
-  // KafkaTemplate.send("orders.created", OrderCreatedEvent) → ORDER_CREATED_EVENT
-  // RabbitTemplate billing.events → BILLING_INVOICE_REQUEST
+  // Inbound POST from Trading/Pricing — data_category TRADE_CAPTURE
+  // KafkaTemplate.send("positions.snapshot", PositionSnapshot) — POSITION_SNAPSHOT toward Analytics
+  // HTTP POST documentation /api/v1/confirmations — TRADE_CONFIRMATION
+  // RabbitTemplate settlement.instructions — SETTLEMENT_INSTRUCTION toward Settlement
+  // KafkaTemplate.send("trade.economics", TradeEconomics) — TRADE_ECONOMICS toward PNL
+  // RabbitTemplate regulatory.reports — REGULATORY_REPORT toward Regulatory
+  // KafkaTemplate.send("accounting.events", AccountingEvent) — ACCOUNTING_EVENT toward Accounting
 }

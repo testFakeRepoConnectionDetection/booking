@@ -1,5 +1,5 @@
 app:
-  name: Service commandes
+  name: Booking
   flow-enrichment:
     data-category-field: data_category
 
@@ -7,35 +7,60 @@ spring:
   kafka:
     producer:
       bootstrap-servers: kafka.internal:9092
-      topic: orders.created
-      consumed-by-application: Paiements
-      message:
-        data-category: ORDER_CREATED_EVENT
-        payload-type: fixture.dto.OrderCreatedEvent
-        payload-format: AVRO
+      topics:
+        positions:
+          topic: positions.snapshot
+          consumed-by-application: Analytics
+          message:
+            data-category: POSITION_SNAPSHOT
+            payload-type: fixture.dto.PositionSnapshot
+            payload-format: AVRO
+        economics:
+          topic: trade.economics
+          consumed-by-application: PNL
+          message:
+            data-category: TRADE_ECONOMICS
+            payload-type: fixture.dto.TradeEconomics
+            payload-format: AVRO
+        accounting:
+          topic: accounting.events
+          consumed-by-application: Accounting
+          message:
+            data-category: ACCOUNTING_EVENT
+            payload-type: fixture.dto.AccountingEvent
+            payload-format: AVRO
   rabbitmq:
     template:
-      exchange: billing.events
-      routing-key: invoice.request
-      consumed-by-application: Paiements
-      message:
-        data-category: BILLING_INVOICE_REQUEST
-        payload-type: fixture.dto.BillingInvoiceRequest
-        payload-format: JSON
+      exchanges:
+        regulatory:
+          exchange: regulatory.reports
+          routing-key: emir.trade
+          consumed-by-application: Regulatory
+          message:
+            data-category: REGULATORY_REPORT
+            payload-type: fixture.dto.RegulatoryReport
+            payload-format: JSON
+        settlement:
+          exchange: settlement.instructions
+          routing-key: instruction
+          consumed-by-application: Settlement
+          message:
+            data-category: SETTLEMENT_INSTRUCTION
+            payload-type: fixture.dto.SettlementInstruction
+            payload-format: JSON
 
 clients:
-  base-clients:
-    url: https://base-clients.internal
-    application: Base clients
-    data-category: CUSTOMER_REFERENTIAL
-  paiements:
-    url: https://paiements.internal/charge
-    application: Paiements
-    data-category: CHARGE_INSTRUCTION
+  documentation:
+    url: https://documentation.internal/api/v1/confirmations
+    application: Documentation
+    data-category: TRADE_CONFIRMATION
+    payload-format: JSON
+    payload-type: fixture.dto.TradeConfirmation
 
 api:
-  orders:
-    data-category: ORDER_PAYLOAD
+  trades:
+    data-category: TRADE_CAPTURE
+    called-by-application: Trading/Pricing
 
 callers:
-  - API Gateway
+  - Trading/Pricing
