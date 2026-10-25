@@ -1,5 +1,7 @@
 # Booking (fixture)
 
+Business function: `MIDDLE_OFFICE` (`app.business_function`).
+
 Trade booking system of record.
 
 ## Integrations (topology)
