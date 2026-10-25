@@ -7,47 +7,21 @@ spring:
   kafka:
     producer:
       bootstrap-servers: kafka.internal:9092
-      topics:
-        positions:
-          topic: positions.snapshot
-          consumed-by-application: Analytics
-          message:
-            data-category: POSITION_SNAPSHOT
-            payload-type: fixture.dto.PositionSnapshot
-            payload-format: AVRO
-        economics:
-          topic: trade.economics
-          consumed-by-application: PNL
-          message:
-            data-category: TRADE_ECONOMICS
-            payload-type: fixture.dto.TradeEconomics
-            payload-format: AVRO
-        accounting:
-          topic: accounting.events
-          consumed-by-application: Accounting
-          message:
-            data-category: ACCOUNTING_EVENT
-            payload-type: fixture.dto.AccountingEvent
-            payload-format: AVRO
+      topic: positions.snapshot
+      consumed-by-application: Analytics
+      message:
+        data-category: POSITION_SNAPSHOT
+        payload-type: fixture.dto.PositionSnapshot
+        payload-format: AVRO
   rabbitmq:
     template:
-      exchanges:
-        regulatory:
-          exchange: regulatory.reports
-          routing-key: emir.trade
-          consumed-by-application: Regulatory
-          message:
-            data-category: REGULATORY_REPORT
-            payload-type: fixture.dto.RegulatoryReport
-            payload-format: JSON
-        settlement:
-          exchange: settlement.instructions
-          routing-key: instruction
-          consumed-by-application: Settlement
-          message:
-            data-category: SETTLEMENT_INSTRUCTION
-            payload-type: fixture.dto.SettlementInstruction
-            payload-format: JSON
+      exchange: settlement.instructions
+      routing-key: instruction
+      consumed-by-application: Settlement
+      message:
+        data-category: SETTLEMENT_INSTRUCTION
+        payload-type: fixture.dto.SettlementInstruction
+        payload-format: JSON
 
 clients:
   documentation:
