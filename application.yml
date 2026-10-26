@@ -1,6 +1,7 @@
 app:
   name: Booking
   business_function: MIDDLE_OFFICE
+  pillar: "Booking & PNL & REG"
   flow-enrichment:
     data-category-field: data_category
 

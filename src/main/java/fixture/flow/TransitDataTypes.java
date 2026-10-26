@@ -9,6 +9,9 @@ public final class TransitDataTypes {
   /** Node attribute business_function for Booking. */
   public static final String BUSINESS_FUNCTION = "MIDDLE_OFFICE";
 
+  /** Node attribute pillar for Booking. */
+  public static final String PILLAR = "Booking & PNL & REG";
+
   public static final String REST_TRADE_CAPTURE = "TRADE_CAPTURE";
   public static final String KAFKA_POSITION_SNAPSHOT = "POSITION_SNAPSHOT";
   public static final String HTTP_TRADE_CONFIRMATION = "TRADE_CONFIRMATION";

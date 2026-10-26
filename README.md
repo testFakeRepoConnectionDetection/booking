@@ -1,6 +1,7 @@
 # Booking (fixture)
 
 Business function: `MIDDLE_OFFICE` (`app.business_function`).
+Pillar: `Booking & PNL & REG` (`app.pillar`).
 
 Trade booking system of record.
 
