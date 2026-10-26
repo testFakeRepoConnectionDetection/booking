@@ -3,40 +3,50 @@ app:
   business_function: MIDDLE_OFFICE
   pillar: "Booking & PNL & REG"
   flow-enrichment:
-    data-category-field: data_category
+    data-field: data
+    frequency-field: frequency
 
 spring:
-  kafka:
-    producer:
-      bootstrap-servers: kafka.internal:9092
-      topic: positions.snapshot
-      consumed-by-application: Analytics
-      message:
-        data-category: POSITION_SNAPSHOT
-        payload-type: fixture.dto.PositionSnapshot
-        payload-format: AVRO
   rabbitmq:
     template:
-      exchange: settlement.instructions
-      routing-key: instruction
+      exchange: settlement.cashflows
+      routing-key: cashflow
       consumed-by-application: Settlement
+      connection-kind: MQ
       message:
-        data-category: SETTLEMENT_INSTRUCTION
-        payload-type: fixture.dto.SettlementInstruction
-        payload-format: JSON
+        data: cashflow
+        frequency: daily
 
 clients:
   documentation:
     url: https://documentation.internal/api/v1/confirmations
     application: Documentation
-    data-category: TRADE_CONFIRMATION
-    payload-format: JSON
-    payload-type: fixture.dto.TradeConfirmation
+    connection-kind: API
+    channel: /api/v1/confirmations
+    data: trade
+    frequency: real-time
+  datahub-trades:
+    url: https://datahub.internal/api/v1/eod-trades
+    application: DataHub
+    connection-kind: API
+    channel: /api/v1/eod-trades
+    data: trade
+    frequency: daily
+  datahub-cashflows:
+    url: https://datahub.internal/api/v1/eod-cashflows
+    application: DataHub
+    connection-kind: API
+    channel: /api/v1/eod-cashflows
+    data: cashflow
+    frequency: daily
 
 api:
   trades:
-    data-category: TRADE_CAPTURE
+    path: /api/v1/trades
     called-by-application: Trading/Pricing
+    connection-kind: API
+    data: trade
+    frequency: real-time
 
 callers:
   - Trading/Pricing

@@ -8,17 +8,19 @@ Trade booking system of record.
 ## Integrations (topology)
 
 - REST API `/api/v1/trades` called by **Trading/Pricing**.
-- Produces Kafka topic `positions.snapshot` consumed by **Analytics**.
-- Posts the confirmation to **Documentation** over HTTP.
-- Publishes AMQP `settlement.instructions` for **Settlement**.
+- Publishes AMQP `settlement.cashflows` for **Settlement**.
+- Posts the trade to **Documentation** over HTTP.
+- Posts the end-of-day trade to **DataHub** on `/api/v1/eod-trades`.
+- Posts the end-of-day cashflow to **DataHub** on `/api/v1/eod-cashflows`.
 
 ## Data transiting on flows (Data Model fixture)
 
-| Peer | Kind | Channel | data_category |
-|------|------|---------|---------------|
-| Trading/Pricing | API (inbound) | /trades | `TRADE_CAPTURE` |
-| Analytics | KAFKA | positions.snapshot | `POSITION_SNAPSHOT` |
-| Documentation | API | /confirmations | `TRADE_CONFIRMATION` |
-| Settlement | MQ | settlement.instructions | `SETTLEMENT_INSTRUCTION` |
+| Peer | direction | Kind | Channel | data | frequency |
+|------|-----------|------|---------|------|-----------|
+| Trading/Pricing | inbound | API | /api/v1/trades | `trade` | `real-time` |
+| Settlement | outbound | MQ | settlement.cashflows | `cashflow` | `daily` |
+| Documentation | outbound | API | /api/v1/confirmations | `trade` | `real-time` |
+| DataHub | outbound | API | /api/v1/eod-trades | `trade` | `daily` |
+| DataHub | outbound | API | /api/v1/eod-cashflows | `cashflow` | `daily` |
 
-Constants: `fixture.flow.TransitDataTypes`.
+See `TransitDataTypes.java` and `application.yml` (`data`, `frequency`).
